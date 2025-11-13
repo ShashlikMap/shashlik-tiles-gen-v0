@@ -1,0 +1,22 @@
+[package]
+name = "osm"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+itertools = { workspace = true }
+thiserror = { workspace = true }
+error-stack = { workspace = true }
+prost = { workspace = true }
+serde = { workspace = true, features = ["derive"]}
+bytemuck = { workspace = true }
+sled = { workspace = true }
+rusqlite = { workspace = true }
+rstar = { workspace = true, features = ["serde"] }
+geo = { workspace = true, features = ["use-serde"]}
+serde_bare = { version = "0.5" }
+petgraph = { version = "0.6", default-features = false, features = ["graphmap", "serde-1"]}
+bincode = { workspace = true }
+rustc-hash = "2.0.0"
+threadpool = "1.8.1"
+derivative = "2.2.0"

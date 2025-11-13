@@ -1,0 +1,27 @@
+[package]
+name = "osm_tool"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+osm = { path = "../osm"}
+rs_concaveman = { path = "../rs_concaveman"}
+thiserror = { workspace = true }
+error-stack = { workspace = true }
+env_logger = { workspace = true }
+log = { workspace = true }
+clap = { workspace = true }
+prost = { workspace = true }
+rusqlite = { workspace = true }
+bincode = { workspace = true }
+geo = { workspace = true, features = ["spade"]}
+rstar = { workspace = true, features = ["serde"] }
+itertools = { workspace = true }
+flate2 = { version = "1.0", default-features = false, features = ["zlib"]}
+bytes = { version = "1.0" }
+shapefile = { version = "0.6.0", features = ["geo-types"] }
+serde_derive = "1.0.204"
+serde_json = "1.0.48"
+serde = { version = "1.0.204", features = ["derive"] }
+rustc-hash = "2.0.0"
+threadpool = "1.8.1"
