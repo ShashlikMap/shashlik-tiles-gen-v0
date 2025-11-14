@@ -5,9 +5,12 @@ use crate::tiles::{
 use geo::{BoundingRect, Rect};
 use rusqlite::{Connection, Transaction};
 use rustc_hash::{FxHashMap, FxHashSet};
-use std::fs;
+use std::{fs, io};
+use std::io::Write;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Arc;
+use flate2::Compression;
+use flate2::write::GzEncoder;
 use threadpool::ThreadPool;
 
 pub struct TileWriter {
@@ -153,11 +156,20 @@ impl TileWriter {
         let mut stmt = tx.prepare("INSERT INTO tiles (x, y, z, data) VALUES (?1, ?2, ?3, ?4)")
             .unwrap();
 
-        tile_db_map.iter_mut().for_each(|(key, data)| {
+        let len = tile_db_map.len();
+        print!("Compressing: 0%");
+        tile_db_map.iter_mut().enumerate().for_each(|(index, (key, data))| {
             data.0.sort_by(|(a, _), (b, _)| a.cmp(b));
             let serialized = bincode::serialize(&data).unwrap();
-            stmt.execute((key.tile_x, key.tile_y, key.zoom_level, serialized))
+            let mut encoder = GzEncoder::new(Vec::new(), Compression::new(1));
+            encoder.write_all(&serialized).unwrap();
+            let compressed_data = encoder.finish().unwrap();
+            stmt.execute((key.tile_x, key.tile_y, key.zoom_level, compressed_data))
                 .unwrap();
+
+            let percent = ((index as f32 / len as f32) * 100.0).round() as i32;
+            print!("\rCompressing: {}%", percent);
+            io::stdout().flush().unwrap();
         });
     }
 
