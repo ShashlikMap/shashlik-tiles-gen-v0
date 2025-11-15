@@ -35,6 +35,7 @@ impl PbfProcessor {
         ("highway", Some("traffic_signals")),
         ("amenity", Some("toilets")),
         ("amenity", Some("parking")),
+        ("railway", Some("station")),
     ];
     const RELATION_TAG: &'static [(&'static str, Option<&'static str>)] = &[
         ("water", None),
@@ -274,7 +275,7 @@ impl PbfProcessor {
                 for polygon in polygons {
                     let map_geom_obj = MapGeomObject {
                         id: relation.id,
-                        kind: MapGeomObjectKind::from_tag(k, v, None),
+                        kind: MapGeomObjectKind::from_tag(k, v, None, None),
                     };
                     sender
                         .send((map_geom_obj, MapGeometry::Poly(polygon)))
@@ -381,7 +382,7 @@ impl PbfProcessor {
                         }
                         let map_geom_obj = MapGeomObject {
                             id: way.id,
-                            kind: MapGeomObjectKind::from_tag(k, v, None),
+                            kind: MapGeomObjectKind::from_tag(k, v, None, None),
                         };
                         sender
                             .send((None, Some((map_geom_obj, MapGeometry::Poly(polygon)))))
@@ -398,14 +399,23 @@ impl PbfProcessor {
         nodes: &mut FxHashMap<i64, Coord>,
     ) {
         let tag_filter = TagFilter::new(&data_blob.string_table, Self::POI_TAG);
+        let name_en_tag_filter = TagFilter::new(
+            &data_blob.string_table, &[("name:en", None)],
+        );
         for node in &data_blob.nodes {
             nodes.insert(node.id, node.coord);
 
             if let Some((k, v)) = tag_filter.filter(&data_blob.string_table, &node.tags) {
+                let name_en = if let Some(name_tag) = name_en_tag_filter.filter(&data_blob.string_table, &node.tags) {
+                    name_tag.1.to_string()
+                } else {
+                    "".to_string()
+                };
                 let map_geom_obj = MapGeomObject {
                     id: node.id,
-                    kind: MapGeomObjectKind::from_tag(k, v, None),
+                    kind: MapGeomObjectKind::from_tag(k, v, None, Some(name_en)),
                 };
+
                 tile_processor.add_to_tiles(map_geom_obj, MapGeometry::Coord(node.coord));
             }
         }
