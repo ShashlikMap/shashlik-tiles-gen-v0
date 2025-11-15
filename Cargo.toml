@@ -3,24 +3,21 @@ resolver = "2"
 members = [
     "osm",
     "rs_concaveman",
-    "osm_tool"
+    "osm_tool",
+    "tiles-server-sqlite"
 ]
 
 [workspace.dependencies]
 thiserror = "1.0"
 error-stack = "0.4"
-env_logger = "0.10"
 log = "0.4"
 clap = { version = "4.5", features = ["cargo", "unstable-doc"] }
 prost = { version = "0.13"}
-prost-build = { version = "0.13"}
 serde = { version = "1.0" }
-bytemuck = { version = "1.12" }
-geo = { version = "0.29.3", default-features = false }
-sled = { version = "0.34" }
+geo = { version = "0.31.0", default-features = false }
 rstar = { version = "0.12" }
 itertools = { version = "0.13" }
-rusqlite = { version = "0.32.1", features = ["bundled"] }
+rusqlite = { version = "0.37.0", features = ["bundled"] }
 bincode = "1.3.3"
 
 [profile.release]

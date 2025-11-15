@@ -1,4 +1,5 @@
-use geo::{Coord, Euclidean, Length, LineString, Simplify};
+use geo::line_measures::LengthMeasurable;
+use geo::{Coord, Euclidean, LineString, Simplify};
 use itertools::Itertools;
 use osm::map::LineKind::{Highway, Railway};
 use osm::map::{HighwayKind, LineKind, MapGeomObject, MapGeomObjectKind, MapGeometry, RailwayKind, WayInfo, ZOOM_LEVELS};
@@ -112,7 +113,7 @@ impl WayStore {
                 if included {
                     let zlf = zoom_level as f64;
                     let line = if temp_line.0.len() > 2 {
-                        temp_line.simplify(&(0.000008 * zlf * zlf))
+                        temp_line.simplify(0.000008 * zlf * zlf)
                     } else {
                         temp_line.clone()
                     };
@@ -225,7 +226,7 @@ impl WayStore {
             for (map_geom_obj, line) in filtered {
                 if zoom_level == 0 || !preserve_topology {
                     let line = if line.0.len() > 2 {
-                        line.simplify(&(0.000008 * zlf * zlf))
+                        line.simplify(0.000008 * zlf * zlf)
                     } else {
                         line.clone()
                     };
@@ -249,7 +250,7 @@ impl WayStore {
                     let mut temp = Vec::new();
                     let mut prev_index = 0;
                     let mut intersections = 0;
-                    let line_length = line.length::<Euclidean>();
+                    let line_length = line.length(&Euclidean);
                     line.coords().enumerate().for_each(|(index, coord)| {
                         temp.push(*coord);
                         if *start_end_map
@@ -270,7 +271,7 @@ impl WayStore {
                                 prev_index = index;
                                 let line = LineString(temp.clone());
                                 let line = if line.0.len() > 2 {
-                                    line.simplify(&(0.000008 * zlf * zlf))
+                                    line.simplify(0.000008 * zlf * zlf)
                                 } else {
                                     line.clone()
                                 };

@@ -4,16 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-osm = { path = "../osm"}
+osm = { path = "../osm", features = ["routing", "tile_writer"]}
 rs_concaveman = { path = "../rs_concaveman"}
 thiserror = { workspace = true }
 error-stack = { workspace = true }
-env_logger = { workspace = true }
-log = { workspace = true }
 clap = { workspace = true }
 prost = { workspace = true }
-rusqlite = { workspace = true }
-bincode = { workspace = true }
 geo = { workspace = true, features = ["spade"]}
 rstar = { workspace = true, features = ["serde"] }
 itertools = { workspace = true }

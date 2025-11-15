@@ -2,7 +2,7 @@ use crate::map::{MapGeomObject, MapGeometry, MapGeometryCollection, DBS_FOLDER};
 use crate::tiles::{
     calc_tile_ranges, create_tiles_db_connection, TileKey, TileRanges, TILES_COUNT,
 };
-use geo::{BoundingRect, Rect};
+use geo::{BoundingRect, Contains, Coord, Intersects, Line, LineIntersection, LineString, MultiLineString, Polygon, Rect};
 use rusqlite::{Connection, Transaction};
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::{fs, io};
@@ -11,7 +11,10 @@ use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Arc;
 use flate2::Compression;
 use flate2::write::GzEncoder;
+use geo::line_intersection::line_intersection;
+use itertools::Itertools;
 use threadpool::ThreadPool;
+use crate::tile_writer::sutherland_hodgman::sutherland_hodgman_clip;
 
 pub struct TileWriter {
     thread_pool: ThreadPool,
@@ -104,7 +107,7 @@ impl TileWriter {
                     
                     let tile_rect = key.calc_tile_boundary(1.01);
 
-                    for item in tile_ranges.intersection(&map_geometry, &tile_rect, geom_rect) {
+                    for item in Self::intersection(&map_geometry, &tile_rect, geom_rect) {
                         sender
                             .send((key, map_geom_object.clone(), item))
                             .unwrap();
@@ -112,6 +115,71 @@ impl TileWriter {
                 }
             }
         }
+    }
+
+    fn intersection(map_geometry: &MapGeometry, tile_rect: &Rect, geom_rect: &Rect) -> Vec<MapGeometry> {
+        // quickly check if geometry is fully inside the tile 
+        if tile_rect.contains(geom_rect) {
+            return vec![map_geometry.clone()];
+        }
+        // quickly check if geometry is fully outside the tile 
+        if !geom_rect.intersects(tile_rect) {
+            return vec![];
+        }
+        match map_geometry {
+            MapGeometry::Line(line) => {
+                let mut multi_line = MultiLineString(Vec::new());
+                let mut new_line = Vec::new();
+                let coords = line.coords().collect_vec();
+                for (index, &coord) in coords.iter().enumerate() {
+                    if index > 0 {
+                        let line = Line::new(*coords[index - 1], *coord);
+                        if !tile_rect.contains(&line.start) && !tile_rect.contains(&line.end) && Self::rect_intersection(tile_rect, &line).is_none() {
+                            if new_line.len() > 1 {
+                                multi_line.0.push(LineString(new_line));
+                            }
+                            new_line = Vec::new();
+                        }
+                    }
+                    new_line.push(*coord)
+                }
+                if new_line.len() > 1 {
+                    multi_line.0.push(LineString(new_line));
+                }
+                multi_line.0.into_iter().map(MapGeometry::Line).collect()
+            }
+            MapGeometry::Poly(poly) => {
+                let exterior = poly.exterior();
+
+                if let Some(intersected) = sutherland_hodgman_clip(exterior, tile_rect) {
+                    let intersected_inters = poly.interiors().iter().flat_map(|interior| {
+                        sutherland_hodgman_clip(interior, tile_rect)
+                    }).collect_vec();
+                    vec![MapGeometry::Poly(Polygon::new(intersected, intersected_inters))]
+                } else {
+                    vec![]
+                }
+
+                // TODO make boolean intersection available with config a bit later
+                // let intersected = poly.clone().intersection(&rect.to_polygon());
+                // intersected.0.iter().map(|item| MapGeometry::Poly(item.clone())).collect()
+            }
+            MapGeometry::Coord(_) => vec![map_geometry.clone()]
+        }
+    }
+
+    fn rect_intersection(rect: &Rect, line: &Line) -> Option<Coord> {
+        for rect_line in rect.to_lines() {
+            if let Some(intersection) = line_intersection(rect_line, *line) {
+                match intersection {
+                    LineIntersection::SinglePoint { intersection, .. } => {
+                        return Some(intersection);
+                    }
+                    LineIntersection::Collinear { .. } => {}
+                }
+            }
+        }
+        None
     }
 
     pub fn flush_to_collections(&mut self, recreate_channel: bool) {

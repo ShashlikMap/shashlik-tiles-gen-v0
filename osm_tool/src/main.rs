@@ -18,13 +18,10 @@ use crate::config::ShashlikConfig;
 use crate::pbf_processor::PbfProcessor;
 use crate::shape_processor::ShapeProcessor;
 use crate::tile_processor::TileProcessor;
-use itertools::Itertools;
-use osm::map::{get_world_boundary, HighwayKind};
-use osm::routing::OsmRoadGraph;
-use reader::OsmNode;
+use osm::map::get_world_boundary;
 use rs_concaveman::location_trait::LocationTrait;
 use std::time::Instant;
-use std::{collections::HashMap, fs::File};
+use std::fs::File;
 
 #[derive(Parser)]
 #[command(about = "OSM data manipulation tool")]
@@ -68,8 +65,6 @@ struct RoadGraphArgs {
 enum OsmToolSubcommand {
     #[command(about = "Extract OSM spacial/vector data")]
     Extract(ExtractArgs),
-    #[command(about = "Compute road graph for routing")]
-    RoadGraph(RoadGraphArgs),
 }
 
 const POLYGON_MERGE_ZOOM_LEVEL: u32 = 3;
@@ -78,62 +73,6 @@ fn main() {
     let cmd = OsmToolCommand::parse();
 
     match cmd.subcommand {
-        OsmToolSubcommand::RoadGraph(args) => {
-            let f = File::open(args.osm_file_path).expect("Could not open OSM file");
-            let mut graph = OsmRoadGraph::default();
-            let mut nodes: HashMap<i64, OsmNode> = HashMap::new();
-
-            for blob in reader::OsmReader::new(f, get_world_boundary()) {
-                print!("*");
-                if let reader::OsmBlob::Data(data_blob) = blob.expect("Failed to read blob") {
-                    let highway_filter = filter::TagFilter::new(
-                        &data_blob.string_table,
-                        &[("highway", None),],
-                    );
-                    let direction_filter = filter::TagFilter::new(
-                        &data_blob.string_table,
-                        &[("oneway", Some("yes")),],
-                    );
-
-                    nodes.extend(data_blob.nodes.iter().map(|node| (node.id, node.clone())));
-
-                    if data_blob.ways.is_empty() && data_blob.relations.is_empty() {
-                        continue;
-                    }
-
-                    for way in data_blob.ways {
-
-                        if let Some((k, v)) = highway_filter.filter(&data_blob.string_table, &way.tags)
-                        {
-                            match k {
-                                "highway" => {
-                                    let hkind = match HighwayKind::from_descr(v) {
-                                        Some(hk) => hk,
-                                        None => continue
-                                    };
-                                    let one_direction = direction_filter.filter(&data_blob.string_table, &way.tags).is_some();
-                                    let path = way.refs
-                                        .into_iter()
-                                        .filter_map(|nid| nodes.get(&nid))
-                                        .tuple_windows::<(_, _)>();
-
-                                    for (a, b) in path {
-                                        if one_direction {
-                                            graph.add_edge((a.id, a.coord), (b.id, b.coord), hkind);
-                                        } else {
-                                            graph.add_bi_edge((a.id, a.coord), (b.id, b.coord), hkind);
-                                        }
-                                    }
-                                },
-                                _ => {}
-                            }
-                        }
-                    }
-                }
-            }
-
-            graph.save(&args.graph_db_path).unwrap();
-        }
         OsmToolSubcommand::Extract(args) => {
             let shashlik_config: ShashlikConfig =
                 serde_json::from_reader(File::open(args.shashlik_config_path).unwrap()).expect("JSON was not well-formatted");

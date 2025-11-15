@@ -3,7 +3,7 @@ use geo::{Area, Polygon, Simplify};
 use osm::map::MapGeomObjectKind::AdminLine;
 use osm::map::NatureKind::Ground;
 use osm::map::{MapGeomObject, MapGeomObjectKind, MapGeometry, MapPointObjectKind, NatureKind, ZOOM_LEVELS};
-use osm::tile_writer::TileWriter;
+use osm::tile_writer::tile_writer::TileWriter;
 
 pub struct TileProcessor {
     pub tile_writer: TileWriter,
@@ -51,7 +51,7 @@ impl TileProcessor {
             let zlf = zoom_level as f64;
             if let Some(geom) = match &temp_geom {
                 MapGeometry::Line(ref line) => {
-                    Some(MapGeometry::Line(line.simplify(&(0.001 * zlf))))
+                    Some(MapGeometry::Line(line.simplify(0.001 * zlf)))
                 }
                 MapGeometry::Poly(ref poly) => {
                     let epsilon =
@@ -67,9 +67,9 @@ impl TileProcessor {
                         0.0000003
                     };
 
-                    let simplified_exterior = poly.exterior().simplify(&(epsilon * zlf * zlf));
+                    let simplified_exterior = poly.exterior().simplify(epsilon * zlf * zlf);
                     let interiors = if zoom_level < 2 {
-                        poly.interiors().into_iter().map(|line| line.simplify(&(epsilon * zlf * zlf))).collect()
+                        poly.interiors().into_iter().map(|line| line.simplify(epsilon * zlf * zlf)).collect()
                     } else {
                         Vec::new()
                     };

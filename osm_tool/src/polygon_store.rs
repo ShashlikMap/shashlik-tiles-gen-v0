@@ -140,7 +140,7 @@ impl PolygonStore {
                 if poly.unsigned_area() < 0.000003 * (zlf - 2.0) * (zlf - 2.0) {
                     None
                 } else {
-                    Some(poly.simplify_vw(&(0.0000003 * (zlf - 2.0) * (zlf - 2.0))))
+                    Some(poly.simplify_vw(0.0000003 * (zlf - 2.0) * (zlf - 2.0)))
                 }
             })
             .collect_vec();
@@ -189,7 +189,7 @@ impl PolygonStore {
             return geo::MultiPolygon::new(vec![]);
         }
         if polygons.len() == 1 {
-            return polygons.first().unwrap().simplify_vw(&0.00000001);
+            return polygons.first().unwrap().simplify_vw(0.00000001);
         }
 
         // look https://github.com/boostorg/geometry/discussions/947 for details
@@ -221,6 +221,6 @@ impl PolygonStore {
             );
             io::stdout().flush().unwrap();
         }
-        polygons.first().unwrap().simplify_vw(&0.00000001)
+        polygons.first().unwrap().simplify_vw(0.00000001)
     }
 }
