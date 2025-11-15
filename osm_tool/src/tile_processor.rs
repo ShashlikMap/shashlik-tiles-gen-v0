@@ -112,14 +112,18 @@ impl TileProcessor {
                         }
                     }
                     _ => {
-                        if zoom_level == 0 {
+                        let condition = match obj.kind {
+                            MapPointObjectKind::TrafficLight => zoom_level == 0,
+                            MapPointObjectKind::TrainStation => zoom_level <= 2,
+                            _ => zoom_level <= 1
+                        };
+                        if condition {
                             self.tile_writer.add_to_tiles(
                                 zoom_level,
                                 map_geom_obj.clone(),
                                 geom.clone(),
                                 true,
                             );
-                            return;
                         }
                     }
                 },
