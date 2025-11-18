@@ -31,7 +31,9 @@ impl TileProcessor {
     }
 
     fn add_to_buildings(&mut self, map_geom_obj: MapGeomObject, geom: MapGeometry) {
-        self.tile_writer.add_to_tiles(0, map_geom_obj, geom, true);
+        for zoom_level in 0..=1 {
+            self.tile_writer.add_to_tiles(zoom_level, map_geom_obj.clone(), geom.clone(), true);
+        }
     }
 
     // TODO Refactor to separate planet data from tiles data
