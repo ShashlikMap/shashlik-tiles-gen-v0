@@ -275,7 +275,7 @@ impl PbfProcessor {
                 for polygon in polygons {
                     let map_geom_obj = MapGeomObject {
                         id: relation.id,
-                        kind: MapGeomObjectKind::from_tag(k, v, None, None),
+                        kind: MapGeomObjectKind::from_tag(k, v, None, None, None),
                     };
                     sender
                         .send((map_geom_obj, MapGeometry::Poly(polygon)))
@@ -294,6 +294,10 @@ impl PbfProcessor {
         let road_tag_filter = TagFilter::new(
             &data_blob.string_table,
             &[("layer", None), ("tunnel", Some("yes")), ("bridge", None), ("name:en", None)],
+        );
+        let building_tag_filter = TagFilter::new(
+            &data_blob.string_table,
+            &[("building:levels", None)],
         );
 
         for way in &data_blob.ways {
@@ -380,10 +384,29 @@ impl PbfProcessor {
                         if polygon.is_empty() {
                             continue;
                         }
+
+                        let levels = if k == "building" {
+                            let mut levels = 0;
+                            for (k, v) in
+                                building_tag_filter.filter_all(&data_blob.string_table, &way.tags)
+                            {
+                                match k {
+                                    "building:levels" => {
+                                        levels = v.parse::<u16>().unwrap_or(0);
+                                    }
+                                    _ => {}
+                                }
+                            }
+                            Some(levels)
+                        } else {
+                            None
+                        };
+
                         let map_geom_obj = MapGeomObject {
                             id: way.id,
-                            kind: MapGeomObjectKind::from_tag(k, v, None, None),
+                            kind: MapGeomObjectKind::from_tag(k, v, None, None, levels),
                         };
+
                         sender
                             .send((None, Some((map_geom_obj, MapGeometry::Poly(polygon)))))
                             .unwrap();
@@ -413,7 +436,7 @@ impl PbfProcessor {
                 };
                 let map_geom_obj = MapGeomObject {
                     id: node.id,
-                    kind: MapGeomObjectKind::from_tag(k, v, None, Some(name_en)),
+                    kind: MapGeomObjectKind::from_tag(k, v, None, Some(name_en), None),
                 };
 
                 tile_processor.add_to_tiles(map_geom_obj, MapGeometry::Coord(node.coord));

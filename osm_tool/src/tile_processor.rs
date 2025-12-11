@@ -25,7 +25,7 @@ impl TileProcessor {
             MapGeomObjectKind::Poi(..) => self.add_to_poi(map_geom_object, map_geometry),
             MapGeomObjectKind::Nature(..) => self.add_to_nature(map_geom_object, map_geometry),
             MapGeomObjectKind::AdminLine => self.add_to_nature(map_geom_object, map_geometry),
-            MapGeomObjectKind::Building => self.add_to_buildings(map_geom_object, map_geometry),
+            MapGeomObjectKind::Building(..) => self.add_to_buildings(map_geom_object, map_geometry),
             _ => {}
         }
     }

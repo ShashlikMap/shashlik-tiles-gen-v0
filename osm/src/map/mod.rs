@@ -128,7 +128,7 @@ pub struct PopAreaInfo {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Ord, Eq, Hash, PartialOrd)]
 pub enum MapGeomObjectKind {
     Nature(NatureKind),
-    Building,
+    Building(u16),
     Way(WayInfo),
     Route,
     AdminLine,
@@ -136,7 +136,8 @@ pub enum MapGeomObjectKind {
 }
 
 impl MapGeomObjectKind {
-    pub fn from_tag(k: &str, v: &str, way_info: Option<WayInfo>, name_en: Option<String>) -> MapGeomObjectKind {
+    pub fn from_tag(k: &str, v: &str, way_info: Option<WayInfo>, name_en: Option<String>,
+                    levels: Option<u16>) -> MapGeomObjectKind {
         match k {
             "highway" => {
                 if v == "traffic_signals" {
@@ -175,7 +176,7 @@ impl MapGeomObjectKind {
             },
             "water" => MapGeomObjectKind::Nature(NatureKind::Water),
             "leisure" => MapGeomObjectKind::Nature(NatureKind::Park),
-            "building" => MapGeomObjectKind::Building,
+            "building" => MapGeomObjectKind::Building(levels.unwrap_or(0)),
             "natural" | "landuse" => {
                 if v == "water" || v == "bay" {
                     MapGeomObjectKind::Nature(NatureKind::Water)
