@@ -115,7 +115,7 @@ pub enum MapPointObjectKind {
     TrafficLight,
     Toilet,
     Parking,
-    TrainStation,
+    TrainStation(bool),
     Text
 }
 
@@ -137,7 +137,7 @@ pub enum MapGeomObjectKind {
 
 impl MapGeomObjectKind {
     pub fn from_tag(k: &str, v: &str, way_info: Option<WayInfo>, name_en: Option<String>,
-                    levels: Option<u16>) -> MapGeomObjectKind {
+                    levels: Option<u16>, is_train: bool) -> MapGeomObjectKind {
         match k {
             "highway" => {
                 if v == "traffic_signals" {
@@ -168,7 +168,7 @@ impl MapGeomObjectKind {
                 if v == "station" {
                     MapGeomObjectKind::Poi(MapPointInfo {
                         text: name_en.unwrap_or("".to_string()),
-                        kind: MapPointObjectKind::TrainStation,
+                        kind: MapPointObjectKind::TrainStation(is_train),
                     })
                 } else {
                     MapGeomObjectKind::Way(way_info.unwrap())

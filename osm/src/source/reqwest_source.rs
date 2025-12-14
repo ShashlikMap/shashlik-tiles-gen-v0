@@ -15,19 +15,22 @@ impl ReqwestSource {
     pub fn get_tile(&self, x: i32, y: i32, z: i32) -> Result<Vec<u8>, Report<reqwest::Error>> {
         let t1 = SystemTime::now();
         // TODO Configurable URL
-        let res = self.client.get(format!(
+        let response = self.client.get(format!(
             "http://ec2-54-252-214-137.ap-southeast-2.compute.amazonaws.com:3000/tile/{x}/{y}/{z}"
-        )).send().and_then(|response| response.bytes())?
+        )).send();
+        let td = SystemTime::now();
+        let bytes = response.and_then(|response| response.bytes())?
         .to_vec();
         let t2 = SystemTime::now();
         error!(
-            "get_tile, x = {}, y = {}, z = {}, time = {:?}, len = {}",
+            "get_tile, x = {}, y = {}, z = {}, total_time = {:?}, download_time = {:?}, len = {}",
             x,
             y,
             z,
             t2.duration_since(t1),
-            res.len()
+            t2.duration_since(td),
+            bytes.len()
         );
-        Ok(res)
+        Ok(bytes)
     }
 }

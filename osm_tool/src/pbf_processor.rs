@@ -275,7 +275,7 @@ impl PbfProcessor {
                 for polygon in polygons {
                     let map_geom_obj = MapGeomObject {
                         id: relation.id,
-                        kind: MapGeomObjectKind::from_tag(k, v, None, None, None),
+                        kind: MapGeomObjectKind::from_tag(k, v, None, None, None, false),
                     };
                     sender
                         .send((map_geom_obj, MapGeometry::Poly(polygon)))
@@ -404,7 +404,7 @@ impl PbfProcessor {
 
                         let map_geom_obj = MapGeomObject {
                             id: way.id,
-                            kind: MapGeomObjectKind::from_tag(k, v, None, None, levels),
+                            kind: MapGeomObjectKind::from_tag(k, v, None, None, levels, false),
                         };
 
                         sender
@@ -425,6 +425,9 @@ impl PbfProcessor {
         let name_en_tag_filter = TagFilter::new(
             &data_blob.string_table, &[("name:en", None)],
         );
+        let train_tag_filter = TagFilter::new(
+            &data_blob.string_table, &[("train", Some("yes"))],
+        );
         for node in &data_blob.nodes {
             nodes.insert(node.id, node.coord);
 
@@ -434,9 +437,11 @@ impl PbfProcessor {
                 } else {
                     "".to_string()
                 };
+
+                let is_train = train_tag_filter.filter(&data_blob.string_table, &node.tags).is_some();
                 let map_geom_obj = MapGeomObject {
                     id: node.id,
-                    kind: MapGeomObjectKind::from_tag(k, v, None, Some(name_en), None),
+                    kind: MapGeomObjectKind::from_tag(k, v, None, Some(name_en), None, is_train),
                 };
 
                 tile_processor.add_to_tiles(map_geom_obj, MapGeometry::Coord(node.coord));

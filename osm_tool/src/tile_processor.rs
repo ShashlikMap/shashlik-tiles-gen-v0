@@ -116,7 +116,9 @@ impl TileProcessor {
                     _ => {
                         let condition = match obj.kind {
                             MapPointObjectKind::TrafficLight => zoom_level == 0,
-                            MapPointObjectKind::TrainStation => zoom_level <= 2,
+                            MapPointObjectKind::TrainStation(is_train) => {
+                                zoom_level <= if is_train { 4 } else { 2 }
+                            },
                             _ => zoom_level <= 1
                         };
                         if condition {
