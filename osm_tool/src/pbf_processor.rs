@@ -293,7 +293,7 @@ impl PbfProcessor {
         let tag_filter = TagFilter::new(&data_blob.string_table, Self::WAYS_TAG);
         let road_tag_filter = TagFilter::new(
             &data_blob.string_table,
-            &[("layer", None), ("tunnel", Some("yes")), ("bridge", None), ("name:en", None)],
+            &[("layer", None), ("tunnel", Some("yes")), ("bridge", None), ("name:en", None), ("name", None)],
         );
         let building_tag_filter = TagFilter::new(
             &data_blob.string_table,
@@ -314,6 +314,7 @@ impl PbfProcessor {
 
                         let mut layer = 0;
                         let mut layer_kind = LayerKind::None;
+                        let mut road_name_en:Option<String> = None;
                         let mut road_name:Option<String> = None; 
 
                         for (k, v) in
@@ -330,6 +331,9 @@ impl PbfProcessor {
                                     layer_kind = LayerKind::Bridge;
                                 }
                                 "name:en" => {
+                                    road_name_en = v.parse::<String>().ok();
+                                }
+                                "name" => {
                                     road_name = v.parse::<String>().ok();
                                 }
                                 _ => {}
@@ -362,7 +366,7 @@ impl PbfProcessor {
                             line_kind,
                             layer,
                             layer_kind,
-                            name_en: road_name
+                            name_en: road_name_en.or(road_name),
                         };
 
                         sender
@@ -423,7 +427,7 @@ impl PbfProcessor {
     ) {
         let tag_filter = TagFilter::new(&data_blob.string_table, Self::POI_TAG);
         let name_en_tag_filter = TagFilter::new(
-            &data_blob.string_table, &[("name:en", None)],
+            &data_blob.string_table, &[("name:en", None), ("name", None)],
         );
         let train_tag_filter = TagFilter::new(
             &data_blob.string_table, &[("train", Some("yes"))],
@@ -432,16 +436,26 @@ impl PbfProcessor {
             nodes.insert(node.id, node.coord);
 
             if let Some((k, v)) = tag_filter.filter(&data_blob.string_table, &node.tags) {
-                let name_en = if let Some(name_tag) = name_en_tag_filter.filter(&data_blob.string_table, &node.tags) {
-                    name_tag.1.to_string()
-                } else {
-                    "".to_string()
-                };
+                let mut name_en: Option<String> = None;
+                let mut name: Option<String> = None;
+                for (k, v) in
+                    name_en_tag_filter.filter_all(&data_blob.string_table, &node.tags)
+                {
+                    match k {
+                        "name:en" => {
+                            name_en = v.parse::<String>().ok();
+                        }
+                        "name" => {
+                            name = v.parse::<String>().ok();
+                        }
+                        _ => {}
+                    }
+                }
 
                 let is_train = train_tag_filter.filter(&data_blob.string_table, &node.tags).is_some();
                 let map_geom_obj = MapGeomObject {
                     id: node.id,
-                    kind: MapGeomObjectKind::from_tag(k, v, None, Some(name_en), None, is_train),
+                    kind: MapGeomObjectKind::from_tag(k, v, None, name_en.or(name), None, is_train),
                 };
 
                 tile_processor.add_to_tiles(map_geom_obj, MapGeometry::Coord(node.coord));
