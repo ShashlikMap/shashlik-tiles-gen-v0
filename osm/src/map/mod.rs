@@ -116,7 +116,6 @@ pub enum MapPointObjectKind {
     Toilet,
     Parking,
     TrainStation(bool),
-    Text
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Hash, Eq)]
@@ -130,7 +129,6 @@ pub enum MapGeomObjectKind {
     Nature(NatureKind),
     Building(u16),
     Way(WayInfo),
-    Route,
     AdminLine,
     Poi(MapPointInfo)
 }
