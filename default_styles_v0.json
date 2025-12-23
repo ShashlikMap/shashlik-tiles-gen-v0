@@ -1,0 +1,296 @@
+[
+  {
+    "id": "ground",
+    "render_style": {
+      "Fill": {
+        "r": 0.52,
+        "g": 0.37,
+        "b": 0.29,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "railway_station",
+    "render_style": {
+      "Fill": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 1.0,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "train_station",
+    "render_style": {
+      "Fill": {
+        "r": 0.0,
+        "g": 0.2,
+        "b": 0.0,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "poi_traffic_light",
+    "render_style": {
+      "Fill": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "poi_toilet",
+    "render_style": {
+      "Fill": {
+        "r": 0.6,
+        "g": 0.0,
+        "b": 0.6,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "kml_dots",
+    "render_style": {
+      "Fill": {
+        "r": 1.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "water",
+    "render_style": {
+      "Fill": {
+        "r": 0.0,
+        "g": 0.741,
+        "b": 0.961,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "building",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.5,
+          "g": 0.5,
+          "b": 0.5,
+          "a": 1.0
+        },
+        0.0
+      ]
+    }
+  },
+  {
+    "id": "park",
+    "render_style": {
+      "Fill": {
+        "r": 0.447,
+        "g": 0.91,
+        "b": 0.651,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "forest",
+    "render_style": {
+      "Fill": {
+        "r": 0.0,
+        "g": 0.549,
+        "b": 0.239,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "puck_style",
+    "render_style": {
+      "Fill": {
+        "r": 0.0,
+        "g": 0.09,
+        "b": 1.0,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "route_motorbike",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.2,
+          "g": 0.2,
+          "b": 1.0,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "route_pedestrian",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.2,
+          "g": 0.5,
+          "b": 0.7,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "highway_motorway",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.87843,
+          "g": 0.48627,
+          "b": 0.56471,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "highway_primary",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.98824,
+          "g": 0.83922,
+          "b": 0.64314,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "highway_trunk",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.97647,
+          "g": 0.69804,
+          "b": 0.61176,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "highway_secondary",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.97255,
+          "g": 0.98039,
+          "b": 0.77255,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "highway_tertiary",
+    "render_style": {
+      "Border": [
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "highway_footway",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.8,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "highway_default",
+    "render_style": {
+      "Border": [
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "admin_line",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 1.0
+        },
+        0.3
+      ]
+    }
+  },
+  {
+    "id": "poi",
+    "render_style": {
+      "Fill": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 1.0,
+        "a": 1.0
+      }
+    }
+  },
+  {
+    "id": "rails",
+    "render_style": {
+      "Dashed": [
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        },
+        {
+          "r": 0.2,
+          "g": 0.2,
+          "b": 0.2,
+          "a": 1.0
+        }
+      ]
+    }
+  }
+]
