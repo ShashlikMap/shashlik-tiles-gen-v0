@@ -10,6 +10,7 @@ use poem::{
 use serde::Deserialize;
 use std::fmt::{Debug, Display, Formatter};
 use std::sync::Arc;
+use poem::endpoint::StaticFileEndpoint;
 use thiserror::Error;
 use tokio::task::spawn_blocking;
 use osm::source::tiles_sqlite_store::TilesSQLiteStore;
@@ -94,6 +95,7 @@ async fn main() -> Result<(), Report<TileServerError>> {
 
     let app = Route::new()
         .at("/tile/:x/:y/:z", get(get_state))
+        .at("/styles_v0.json", StaticFileEndpoint::new("styles_v0.json"))
         .with(AddData::new(state));
 
     Server::new(TcpListener::bind("0.0.0.0:3000"))

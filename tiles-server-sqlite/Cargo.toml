@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 tracing-subscriber = { version = "0.3.9", features = ["env-filter"] }
-poem = "3.1.12"
+poem = { version = "3.1.12", features = ["static-files"] }
 thiserror =  { workspace = true }
 osm = { path = "../osm" }
 serde = { version = "1.0.227", features = ["derive"] }
