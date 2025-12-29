@@ -95,7 +95,7 @@ impl<S: TileSource> TileStore<S> {
     }
 
     // TODO Report
-    pub fn load_geometries(&self, tile_key: &TileKey) -> Vec<(MapGeomObject, MapGeometry)> {
+    pub fn load_geometries(&self, tile_key: &TileKey) -> Vec<(MapGeomObject, MapGeometry<f32>)> {
         let data = self
             .tile_source
             .fetch(tile_key.tile_x, tile_key.tile_y, tile_key.zoom_level)
@@ -109,9 +109,9 @@ impl<S: TileSource> TileStore<S> {
             println!("Failed to decompress tile key {tile_key:?}. Error: {err}");
             0
         });
-        let collection: MapGeometryCollection = bincode::deserialize(&decompressed_data).unwrap_or_else(|err| {
+        let collection: MapGeometryCollection<f32> = bincode::deserialize(&decompressed_data).unwrap_or_else(|err| {
             println!("Failed to deserialize tile key {tile_key:?}, Error: {err}");
-            MapGeometryCollection(vec![])
+            MapGeometryCollection::<f32>(vec![])
         });
         collection.0
     }

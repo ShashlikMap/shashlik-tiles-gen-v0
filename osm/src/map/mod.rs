@@ -58,7 +58,7 @@ where
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
-pub struct MapGeometryCollection(pub Vec<(MapGeomObject, MapGeometry)>);
+pub struct MapGeometryCollection<T: CoordNum = f64>(pub Vec<(MapGeomObject, MapGeometry<T>)>);
 
 // TODO Remove after fully implemented in renderer
 impl<T: std::fmt::Debug + CoordNum> MapGeometry<T> {

@@ -24,3 +24,4 @@ reqwest = { version = "0.12.24", features = ["blocking"] }
 log = "0.4.28"
 openssl = { version = "0.10", features = ["vendored"] }
 serde_json = "1.0.145"
+googleprojection = "1.2.0"

@@ -20,7 +20,7 @@ impl ReqwestSource {
         let response = self
             .client
             .get(format!(
-            "http://ec2-54-252-214-137.ap-southeast-2.compute.amazonaws.com:3000/tile/{x}/{y}/{z}"
+            "http://ec2-3-107-91-243.ap-southeast-2.compute.amazonaws.com:3000/tile/{x}/{y}/{z}"
         ))
             .send();
         let td = SystemTime::now();
@@ -39,7 +39,7 @@ impl ReqwestSource {
     }
 
     pub fn styles(&self) -> Result<Vec<Style>, Report<StylesFetchError>> {
-        let response = self.client.get("http://ec2-54-252-214-137.ap-southeast-2.compute.amazonaws.com:3000/styles_v0.json".to_string()).send();
+        let response = self.client.get("http://ec2-3-107-91-243.ap-southeast-2.compute.amazonaws.com:3000/styles_v0.json".to_string()).send();
         response
             .change_context(StylesFetchError::Internal)
             .and_then(|response| {
