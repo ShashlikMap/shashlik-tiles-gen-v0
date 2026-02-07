@@ -11,7 +11,13 @@ pub struct Style {
 pub enum RenderStyle {
     Fill(RenderStyleColor),
     Border(RenderStyleColor, f32),
-    Dashed(RenderStyleColor, RenderStyleColor),
+    Dashed(RenderStyleColor, RenderStyleColor, DashStyle),
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum DashStyle {
+    Solid,
+    Circles
 }
 
 #[derive(Serialize, Deserialize)]
