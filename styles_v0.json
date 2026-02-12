@@ -138,26 +138,6 @@
     }
   },
   {
-    "id": "route_pedestrian",
-    "render_style": {
-      "Dashed": [
-        {
-          "r": 0.2,
-          "g": 0.2,
-          "b": 1.0,
-          "a": 1.0
-        },
-        {
-          "r": 0.0,
-          "g": 0.0,
-          "b": 0.0,
-          "a": 1.0
-        },
-        "Circles"
-      ]
-    }
-  },
-  {
     "id": "highway_motorway",
     "render_style": {
       "Border": [
@@ -297,6 +277,20 @@
           "a": 1.0
         },
         "Solid"
+      ]
+    }
+  },
+  {
+    "id": "route_pedestrian_dots",
+    "render_style": {
+      "Border": [
+        {
+          "r": 0.2,
+          "g": 0.2,
+          "b": 1.0,
+          "a": 1.0
+        },
+        10.0
       ]
     }
   }
