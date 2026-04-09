@@ -14,8 +14,8 @@
     "id": "railway_station",
     "render_style": {
       "Fill": {
-        "r": 0.0,
-        "g": 0.0,
+        "r": 1.0,
+        "g": 1.0,
         "b": 1.0,
         "a": 1.0
       }
@@ -25,9 +25,9 @@
     "id": "train_station",
     "render_style": {
       "Fill": {
-        "r": 0.0,
-        "g": 0.2,
-        "b": 0.0,
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
         "a": 1.0
       }
     }
@@ -47,9 +47,9 @@
     "id": "poi_toilet",
     "render_style": {
       "Fill": {
-        "r": 0.6,
-        "g": 0.0,
-        "b": 0.6,
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
         "a": 1.0
       }
     }
@@ -253,8 +253,8 @@
     "id": "poi",
     "render_style": {
       "Fill": {
-        "r": 0.0,
-        "g": 0.0,
+        "r": 1.0,
+        "g": 1.0,
         "b": 1.0,
         "a": 1.0
       }
@@ -281,17 +281,34 @@
     }
   },
   {
-    "id": "route_pedestrian_dots",
+    "id": "route_pedestrian",
     "render_style": {
-      "Border": [
+      "Dashed": [
+        {
+          "r": 1.0,
+          "g": 1.0,
+          "b": 1.0,
+          "a": 1.0
+        },
         {
           "r": 0.2,
           "g": 0.2,
           "b": 1.0,
           "a": 1.0
         },
-        10.0
-      ]
+        "Circles"
+        ]
+    }
+  },
+  {
+    "id": "poi_background",
+    "render_style": {
+      "Fill": {
+        "r": 0.1,
+        "g": 0.1,
+        "b": 0.0,
+        "a": 0.8
+      }
     }
   }
 ]
