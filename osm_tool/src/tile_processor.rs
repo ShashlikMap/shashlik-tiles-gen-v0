@@ -58,13 +58,13 @@ impl TileProcessor {
                 MapGeometry::Poly(ref poly) => {
                     let epsilon =
                         if map_geom_obj.kind == MapGeomObjectKind::Nature(Ground) {
-                            0.00007
+                            0.00006
                         } else {
                             0.00003
                         };
                     let area = if map_geom_obj.kind == MapGeomObjectKind::Nature(Ground)
                     {
-                        0.0001
+                        if zoom_level >= 6 { 0.0001 } else { 0.000005 }
                     } else {
                         0.0000003
                     };

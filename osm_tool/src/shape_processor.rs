@@ -53,7 +53,7 @@ impl ShapeProcessor {
                     // MultiPolygon for land should have only one polygon
                     let poly = mpoly.0.first().unwrap();
                     // there are around 800000 shapes, we're still not really interested in all of them
-                    if poly.unsigned_area() < 0.001 {
+                    if poly.unsigned_area() < 0.00005 {
                         return None;
                     }
                     Some(poly.clone())
