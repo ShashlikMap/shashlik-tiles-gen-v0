@@ -2,9 +2,7 @@ use crate::map::{
     MapGeomObject, MapGeometry, MapGeometryCollection, DBS_FOLDER,
 };
 use crate::tile_writer::sutherland_hodgman::sutherland_hodgman_clip;
-use crate::tiles::{
-    calc_tile_ranges, create_tiles_db_connection, TileKey, TileRanges, TILES_COUNT,
-};
+use crate::tiles::{calc_tile_ranges, create_tiles_db_connection, TileKey, TileRanges, TILES_COUNT, TILE_OVERLAP_PERCENT};
 use flate2::write::GzEncoder;
 use flate2::Compression;
 use geo::line_intersection::line_intersection;
@@ -108,7 +106,7 @@ impl TileWriter {
                     // it's a good tradeoff between amount artefacts and over tesselation/drawing
                     // note: caching this calculation isn't helpful
 
-                    let tile_rect = key.calc_tile_boundary(1.01);
+                    let tile_rect = key.calc_tile_boundary(TILE_OVERLAP_PERCENT);
 
                     for item in Self::intersection(&map_geometry, &tile_rect, geom_rect) {
                         sender.send((key, map_geom_object.clone(), item)).unwrap();
@@ -249,7 +247,7 @@ impl TileWriter {
             .for_each(|(index, (key, data))| {
                 data.0.sort_by(|(a, _), (b, _)| a.cmp(b));
 
-                let tile_rect = key.calc_tile_boundary(1.0);
+                let tile_rect = key.calc_tile_boundary(TILE_OVERLAP_PERCENT);
                 let tile_rect_origin = Self::lat_lon_to_world(&tile_rect.min());
                 data.0
                     .iter_mut()
