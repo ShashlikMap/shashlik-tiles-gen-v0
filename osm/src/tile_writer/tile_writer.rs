@@ -1,6 +1,4 @@
-use crate::map::{
-    MapGeomObject, MapGeometry, MapGeometryCollection, DBS_FOLDER,
-};
+use crate::map::{MapGeomObject, MapGeomObjectKind, MapGeometry, MapGeometryCollection, NatureKind, DBS_FOLDER};
 use crate::tile_writer::sutherland_hodgman::sutherland_hodgman_clip;
 use crate::tiles::{calc_tile_ranges, create_tiles_db_connection, TileKey, TileRanges, TILES_COUNT, TILE_OVERLAP_PERCENT};
 use flate2::write::GzEncoder;
@@ -35,7 +33,7 @@ impl Default for TileWriter {
 }
 
 impl TileWriter {
-    const MIN_ZOOM_FOR_PLANET_TILES: u32 = 10;
+    const MIN_ZOOM_FOR_PLANET_TILES: u32 = 8;
     pub fn new() -> Self {
         let (tx, rx) = channel::<(TileKey, MapGeomObject, MapGeometry)>();
         TileWriter {

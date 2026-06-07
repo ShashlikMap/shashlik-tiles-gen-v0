@@ -247,7 +247,7 @@ impl PbfProcessor {
                     .map(|way| {
                         let coords = way
                             .iter()
-                            .map(|id| nodes.get(id).unwrap().clone())
+                            .filter_map(|id| nodes.get(id).cloned())
                             .collect_vec();
 
                         Polygon::new(LineString(coords), Vec::new()).into()
