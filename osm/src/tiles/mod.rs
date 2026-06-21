@@ -120,21 +120,25 @@ impl<S: TileSource> TileStore<S> {
         MapGeometryCollection::<f32>(
             collection.0
                 .iter()
-                .map(|(obj, geometry)| (obj.clone(), Self::convert_data(geometry)))
+                .map(|(obj, geometry)| (obj.clone(),
+                                        Self::convert_and_restore_data(geometry, tile_key)))
                 .collect(),
         ).0
     }
 
-    fn convert_data(geometry: &MapGeometry<f16>) -> MapGeometry<f32> {
+    // Tile generator use a zoom level inside mercator.
+    // The fastest way to restore data back to the client level is just multiplication 2.pow(zoom)
+    // Apparently, it doesn't affect precision!
+    fn convert_and_restore_data(geometry: &MapGeometry<f16>, tile_key: &TileKey) -> MapGeometry<f32> {
         match geometry {
             MapGeometry::Line(line) => MapGeometry::Line(line.map_coords(|coord| {
-                coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y) }
+                (coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y) } * 2.0f32.powf(tile_key.zoom_level as f32))
             })),
             MapGeometry::Poly(poly) => MapGeometry::Poly(poly.map_coords(|coord| {
-                coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y)}
+                (coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y) } * 2.0f32.powf(tile_key.zoom_level as f32))
             })),
             MapGeometry::Coord(coord) => {
-                MapGeometry::Coord(coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y) })
+                MapGeometry::Coord(coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y) } * 2.0f32.powf(tile_key.zoom_level as f32))
             }
         }
     }
