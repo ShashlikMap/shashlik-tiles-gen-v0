@@ -1,7 +1,8 @@
 use crate::map::{get_world_boundary, MapGeomObject, MapGeometry, MapGeometryCollection};
 use crate::source::TileSource;
 use flate2::read::GzDecoder;
-use geo::{coord, Rect, Scale};
+use geo::{coord, MapCoords, Rect, Scale};
+use half::f16;
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use std::io::Read;
@@ -110,10 +111,31 @@ impl<S: TileSource> TileStore<S> {
             println!("Failed to decompress tile key {tile_key:?}. Error: {err}");
             0
         });
-        let collection: MapGeometryCollection<f32> = bincode::deserialize(&decompressed_data).unwrap_or_else(|err| {
+        let collection: MapGeometryCollection<f16> = bincode::deserialize(&decompressed_data).unwrap_or_else(|err| {
             println!("Failed to deserialize tile key {tile_key:?}, Error: {err}");
-            MapGeometryCollection::<f32>(vec![])
+            MapGeometryCollection::<f16>(vec![])
         });
-        collection.0
+
+        // converts data from f16 to f32 so the client doesn't know about f16 crate
+        MapGeometryCollection::<f32>(
+            collection.0
+                .iter()
+                .map(|(obj, geometry)| (obj.clone(), Self::convert_data(geometry)))
+                .collect(),
+        ).0
+    }
+
+    fn convert_data(geometry: &MapGeometry<f16>) -> MapGeometry<f32> {
+        match geometry {
+            MapGeometry::Line(line) => MapGeometry::Line(line.map_coords(|coord| {
+                coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y) }
+            })),
+            MapGeometry::Poly(poly) => MapGeometry::Poly(poly.map_coords(|coord| {
+                coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y)}
+            })),
+            MapGeometry::Coord(coord) => {
+                MapGeometry::Coord(coord! {x: f16::to_f32(coord.x), y: f16::to_f32(coord.y) })
+            }
+        }
     }
 }

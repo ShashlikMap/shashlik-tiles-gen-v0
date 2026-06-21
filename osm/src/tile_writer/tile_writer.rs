@@ -16,6 +16,7 @@ use std::io::Write;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Arc;
 use std::{fs, io};
+use half::f16;
 use threadpool::ThreadPool;
 
 pub struct TileWriter {
@@ -246,12 +247,12 @@ impl TileWriter {
                 data.0.sort_by(|(a, _), (b, _)| a.cmp(b));
 
                 let tile_rect = key.calc_tile_boundary(TILE_OVERLAP_PERCENT);
-                let tile_rect_origin = Self::lat_lon_to_world(&tile_rect.min());
+                let tile_rect_origin = Self::lat_lon_to_world(&tile_rect.min(), key.zoom_level);
                 data.0
                     .iter_mut()
-                    .for_each(|(_, geometry)| Self::convert_coords(geometry, tile_rect_origin));
+                    .for_each(|(_, geometry)| Self::convert_coords(geometry, key, tile_rect_origin));
 
-                let data = MapGeometryCollection::<f32>(
+                let data = MapGeometryCollection::<f16>(
                     data.0
                         .iter()
                         .map(|(obj, geometry)| (obj.clone(), Self::convert_data(geometry)))
@@ -271,36 +272,37 @@ impl TileWriter {
             });
     }
 
-    fn convert_coords(geometry: &mut MapGeometry, tile_rect_origin: geo::Coord) {
+    fn convert_coords(geometry: &mut MapGeometry, tile_key: &TileKey, tile_rect_origin: geo::Coord) {
         match geometry {
             MapGeometry::Line(line) => line.coords_mut().for_each(|coord| {
-                *coord = Self::lat_lon_to_world(&coord) - tile_rect_origin;
+                *coord = Self::lat_lon_to_world(&coord, tile_key.zoom_level) - tile_rect_origin;
             }),
             MapGeometry::Poly(poly) => {
-                poly.map_coords_in_place(|coord| Self::lat_lon_to_world(&coord) - tile_rect_origin)
+                poly.map_coords_in_place(|coord| Self::lat_lon_to_world(&coord, tile_key.zoom_level) - tile_rect_origin)
             }
-            MapGeometry::Coord(coord) => *coord = Self::lat_lon_to_world(&coord) - tile_rect_origin,
+            MapGeometry::Coord(coord) => *coord = Self::lat_lon_to_world(&coord, tile_key.zoom_level) - tile_rect_origin,
         }
     }
 
-    fn convert_data(geometry: &MapGeometry) -> MapGeometry<f32> {
+    fn convert_data(geometry: &MapGeometry) -> MapGeometry<f16> {
         match geometry {
             MapGeometry::Line(line) => MapGeometry::Line(line.map_coords(|coord| {
-                coord! {x: coord.x as f32, y: coord.y as f32}
+                coord! {x: f16::from_f64(coord.x), y: f16::from_f64(coord.y) }
             })),
             MapGeometry::Poly(poly) => MapGeometry::Poly(poly.map_coords(|coord| {
-                coord! {x: coord.x as f32, y: coord.y as f32}
+                coord! {x: f16::from_f64(coord.x), y: f16::from_f64(coord.y)}
             })),
             MapGeometry::Coord(coord) => {
-                MapGeometry::Coord(coord! {x: coord.x as f32, y: coord.y as f32})
+                MapGeometry::Coord(coord! {x: f16::from_f64(coord.x), y: f16::from_f64(coord.y) })
             }
         }
     }
 
-    fn lat_lon_to_world(lat_lon: &Coord<f64>) -> Coord<f64> {
+    fn lat_lon_to_world(lat_lon: &Coord<f64>, zl: i32) -> Coord<f64> {
         let lat_lon: (f64, f64) = (*lat_lon).into();
         Mercator::with_size(1)
-            .from_ll_to_subpixel(&lat_lon, 22)
+            // client will use * 2.0.pow(zoom_level) to restore the value
+            .from_ll_to_subpixel(&lat_lon, (22 - zl) as usize)
             .unwrap()
             .into()
     }
