@@ -35,6 +35,7 @@ impl PbfProcessor {
         ("highway", Some("traffic_signals")),
         ("amenity", Some("toilets")),
         ("amenity", Some("parking")),
+        ("amenity", Some("charging_station")),
         ("railway", Some("station")),
     ];
     const RELATION_TAG: &'static [(&'static str, Option<&'static str>)] = &[

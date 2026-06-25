@@ -1,4 +1,7 @@
-use crate::map::{MapGeomObject, MapGeomObjectKind, MapGeometry, MapGeometryCollection, NatureKind, DBS_FOLDER};
+use crate::map::MapGeomObject;
+use crate::map::MapGeometry;
+use crate::map::MapGeometryCollection;
+use crate::map::DBS_FOLDER;
 use crate::tile_writer::sutherland_hodgman::sutherland_hodgman_clip;
 use crate::tiles::{calc_tile_ranges, create_tiles_db_connection, TileKey, TileRanges, TILES_COUNT, TILE_OVERLAP_PERCENT};
 use flate2::write::GzEncoder;
@@ -9,6 +12,7 @@ use geo::{
     MapCoords, MapCoordsInPlace, MultiLineString, Polygon, Rect,
 };
 use googleprojection::Mercator;
+use half::f16;
 use itertools::Itertools;
 use rusqlite::{Connection, Transaction};
 use rustc_hash::{FxHashMap, FxHashSet};
@@ -16,7 +20,6 @@ use std::io::Write;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Arc;
 use std::{fs, io};
-use half::f16;
 use threadpool::ThreadPool;
 
 pub struct TileWriter {

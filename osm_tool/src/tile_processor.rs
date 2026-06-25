@@ -102,7 +102,8 @@ impl TileProcessor {
             match map_geom_obj.kind {
                 MapGeomObjectKind::Poi(ref obj) => match obj.kind {
                     MapPointObjectKind::PopArea(info) => {
-                        if info.level == 0 && zoom_level >= 5 && zoom_level <= 12
+                        if info.level == 0 && (zoom_level >= 5 && zoom_level <= 8)
+                            || (zoom_level > 8 && zoom_level <= 12 && info.population >= 500000)
                             || info.level == 1 && zoom_level > 12
                         {
                             self.tile_writer.add_to_tiles(
@@ -119,6 +120,7 @@ impl TileProcessor {
                             MapPointObjectKind::TrainStation(is_train) => {
                                 zoom_level <= if is_train { 4 } else { 2 }
                             },
+                            MapPointObjectKind::EVCharging => zoom_level <= 4,
                             _ => zoom_level <= 1
                         };
                         if condition {

@@ -84,28 +84,24 @@ impl WayStore {
             for zoom_level in 0..ZOOM_LEVELS {
                 let included = match &map_geom_obj.kind {
                     MapGeomObjectKind::Way(info) => {
-                        if zoom_level == 0 {
-                            true
-                        } else if zoom_level <= 1 {
-                            info.line_kind
-                                != (Highway {
-                                    kind: HighwayKind::Footway,
-                                })
-                        } else if info.line_kind
-                            == (Railway {
-                                kind: RailwayKind::Rail,
-                            })
-                        {
-                            zoom_level < 4
-                        } else if zoom_level >= 13 {
-                            false
+                        if info.line_kind != (Highway { kind: HighwayKind::Footway }) {
+                            if zoom_level <= 1 {
+                                true
+                            } else if info.line_kind == (Railway { kind: RailwayKind::Rail }) {
+                                zoom_level < 4
+                            } else if zoom_level >= 13 {
+                                false
+                            } else {
+                                let line_kind_layer = info.line_kind.get_layer();
+                                zoom_level <= 3 && line_kind_layer != 5 || // drop Service roads
+                                    zoom_level <= 4 && line_kind_layer >= 12 // drop road links
+                                    || zoom_level <= 5 && line_kind_layer >= 13
+                                    || zoom_level <= 6 && line_kind_layer >= 14
+                                    || zoom_level <= 8 && line_kind_layer >= 15
+                                    || line_kind_layer >= 16
+                            }
                         } else {
-                            let line_kind_layer = info.line_kind.get_layer();
-                            zoom_level <= 4 && line_kind_layer >= 12
-                                || zoom_level <= 5 && line_kind_layer >= 13
-                                || zoom_level <= 6 && line_kind_layer >= 14
-                                || zoom_level <= 8 && line_kind_layer >= 15
-                                || line_kind_layer >= 16
+                            false
                         }
                     }
                     _ => false,

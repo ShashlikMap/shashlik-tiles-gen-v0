@@ -98,23 +98,23 @@ impl ShapeProcessor {
                 };
                 sender.send((map_geom_obj, MapGeometry::Coord(coord))).unwrap();
             });
-            // can be downloaded from https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/50m/cultural/ne_50m_populated_places.zip
-            match shapefile::read("./ne_50m_populated_places/ne_50m_populated_places.shp") {
+            // can be downloaded from http://www.naturalearthdata.com/download/50m/cultural/ne_50m_populated_places.zip
+            match shapefile::read("./ne_10m_populated_places_simple/ne_10m_populated_places_simple.shp") {
                 Ok(cities) => {
                     for (_, record) in &cities {
-                        let name = match record.get("NAME").unwrap() {
+                        let name = match record.get("name").unwrap() {
                             Character(f) => f.clone().unwrap(),
                             _ => "".to_string(),
                         };
-                        let population = match record.get("POP_MIN").unwrap() {
+                        let population = match record.get("pop_min").unwrap() {
                             FieldValue::Numeric(f) => f.unwrap() as u32,
                             _ => 0,
                         };
-                        let lon = match record.get("LONGITUDE").unwrap() {
+                        let lon = match record.get("longitude").unwrap() {
                             FieldValue::Numeric(f) => f.unwrap(),
                             _ => 0.0,
                         };
-                        let lat = match record.get("LATITUDE").unwrap() {
+                        let lat = match record.get("latitude").unwrap() {
                             FieldValue::Numeric(f) => f.unwrap(),
                             _ => 0.0,
                         };

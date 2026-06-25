@@ -115,6 +115,7 @@ pub enum MapPointObjectKind {
     TrafficLight,
     Toilet,
     Parking,
+    EVCharging,
     TrainStation(bool),
 }
 
@@ -157,6 +158,11 @@ impl MapGeomObjectKind {
                     MapGeomObjectKind::Poi(MapPointInfo {
                         text: "".to_string(),
                         kind: MapPointObjectKind::Parking,
+                    })
+                } else if v == "charging_station" {
+                    MapGeomObjectKind::Poi(MapPointInfo {
+                        text: "".to_string(),
+                        kind: MapPointObjectKind::EVCharging,
                     })
                 } else {
                     panic!("Unknown key/value: {},{}", k, v)
