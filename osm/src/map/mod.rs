@@ -5,6 +5,7 @@ use rstar::{Envelope, PointDistance, RTreeObject, AABB};
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use derivative::Derivative;
+use rand::RngExt;
 
 pub const DBS_FOLDER: &str = "dbs";
 // 18 is quite far, no need more than that
@@ -180,7 +181,7 @@ impl MapGeomObjectKind {
             },
             "water" => MapGeomObjectKind::Nature(NatureKind::Water),
             "leisure" => MapGeomObjectKind::Nature(NatureKind::Park),
-            "building" => MapGeomObjectKind::Building(levels.unwrap_or(0)),
+            "building" => MapGeomObjectKind::Building(levels.unwrap_or(rand::rng().random_range(2..=3))),
             "natural" | "landuse" => {
                 if v == "water" || v == "bay" {
                     MapGeomObjectKind::Nature(NatureKind::Water)
