@@ -69,6 +69,8 @@ enum OsmToolSubcommand {
 
 const POLYGON_MERGE_ZOOM_LEVEL: u32 = 3;
 
+const WATER_PLANET_SHAPE_ID: i64 = i64::MIN;
+
 fn main() {
     let cmd = OsmToolCommand::parse();
 

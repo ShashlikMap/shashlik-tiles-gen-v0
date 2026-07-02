@@ -1,7 +1,7 @@
-use crate::POLYGON_MERGE_ZOOM_LEVEL;
+use crate::{POLYGON_MERGE_ZOOM_LEVEL, WATER_PLANET_SHAPE_ID};
 use geo::{Area, Polygon, Simplify};
 use osm::map::MapGeomObjectKind::AdminLine;
-use osm::map::NatureKind::Ground;
+use osm::map::NatureKind::Water;
 use osm::map::{MapGeomObject, MapGeomObjectKind, MapGeometry, MapPointObjectKind, NatureKind, ZOOM_LEVELS};
 use osm::tile_writer::tile_writer::TileWriter;
 
@@ -38,8 +38,7 @@ impl TileProcessor {
 
     // TODO Refactor to separate planet data from tiles data
     fn add_to_nature(&mut self, map_geom_obj: MapGeomObject, geom: MapGeometry) {
-        let can_create_new_tiles = map_geom_obj.kind != AdminLine
-            && map_geom_obj.kind != MapGeomObjectKind::Nature(Ground);
+        let can_create_new_tiles = map_geom_obj.kind != AdminLine && map_geom_obj.id != WATER_PLANET_SHAPE_ID;
 
         // it's faster to simplify geometry that already simplified for previous zoom level
         let mut temp_geom = geom;
@@ -56,15 +55,15 @@ impl TileProcessor {
                     Some(MapGeometry::Line(line.simplify(0.001 * zlf)))
                 }
                 MapGeometry::Poly(ref poly) => {
-                    let epsilon =
-                        if map_geom_obj.kind == MapGeomObjectKind::Nature(Ground) {
-                            0.00006
-                        } else {
-                            0.00003
-                        };
-                    let area = if map_geom_obj.kind == MapGeomObjectKind::Nature(Ground)
-                    {
-                        if zoom_level >= 6 { 0.0001 } else { 0.000005 }
+                    let is_water_planet_shape = map_geom_obj.kind == MapGeomObjectKind::Nature(Water)
+                        && map_geom_obj.id == WATER_PLANET_SHAPE_ID;
+                    let epsilon = if is_water_planet_shape {
+                        0.00006
+                    } else {
+                        0.00003
+                    };
+                    let area = if is_water_planet_shape {
+                        0.0
                     } else {
                         0.0000003
                     };

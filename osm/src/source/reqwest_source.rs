@@ -2,7 +2,7 @@ use crate::styles::style_loader::StylesFetchError;
 use crate::styles::Style;
 use error_stack::{Report, ResultExt};
 use log::error;
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 
 pub struct ReqwestSource {
     client: reqwest::blocking::Client,
@@ -11,7 +11,8 @@ pub struct ReqwestSource {
 impl ReqwestSource {
     pub fn new() -> ReqwestSource {
         ReqwestSource {
-            client: reqwest::blocking::Client::new(),
+            client: reqwest::blocking::Client::builder()
+                .tcp_keepalive(Duration::from_secs(30)).build().unwrap(),
         }
     }
     pub fn get_tile(&self, x: i32, y: i32, z: i32) -> Result<Vec<u8>, Report<reqwest::Error>> {

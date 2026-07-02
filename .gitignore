@@ -21,5 +21,6 @@ profile.json
 /admin_lines
 /ne_50m_populated_places
 /ne_50m_admin_0_boundary_lines_land
+/water-polygons-split-4326
 shashlik_config.json
 .DS_STORE
