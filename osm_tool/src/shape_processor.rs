@@ -1,9 +1,9 @@
 use crate::countries::TempCountries;
 use crate::tile_processor::TileProcessor;
 use crate::WATER_PLANET_SHAPE_ID;
-use geo::{coord, Area, BoundingRect, Intersects, Rect};
+use geo::{coord, BoundingRect, Intersects, Rect};
 use osm::map::MapGeomObjectKind::{AdminLine, Poi};
-use osm::map::NatureKind::{Ground, Water};
+use osm::map::NatureKind::Water;
 use osm::map::{
     MapGeomObject, MapGeomObjectKind, MapGeometry, MapPointInfo, MapPointObjectKind, PopAreaInfo,
 };
