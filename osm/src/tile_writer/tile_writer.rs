@@ -334,7 +334,7 @@ impl TileWriter {
         )
         .unwrap();
 
-        conn.execute("CREATE UNIQUE INDEX tiles_index ON tiles(x, y, z);", ())
+        conn.execute("CREATE UNIQUE INDEX tiles_index ON tiles(z, x, y);", ())
             .unwrap();
 
         conn

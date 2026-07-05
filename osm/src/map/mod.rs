@@ -9,7 +9,7 @@ use rand::RngExt;
 
 pub const DBS_FOLDER: &str = "dbs";
 // 18 is quite far, no need more than that
-pub const ZOOM_LEVELS: u32 = 18;
+pub const ZOOM_LEVELS: u32 = 16;
 
 pub fn get_world_boundary() -> Rect {
     Rect::new(

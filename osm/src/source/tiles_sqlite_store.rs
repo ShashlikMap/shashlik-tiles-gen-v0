@@ -18,8 +18,13 @@ pub enum TilesSQLiteStoreError {
 impl TilesSQLiteStore {
     const TILE_QUERY: &'static str = "SELECT data FROM tiles WHERE x=:x AND y=:y AND z=:z;";
     pub fn new<P: AsRef<Path>>(path: P) -> TilesSQLiteStore {
+        let conn = Self::create_tiles_db_connection(path);
+        conn.pragma_update(None, "mmap_size", 314572800).unwrap();
+        conn.pragma_update(None, "cache_size", -40000).unwrap();
+        conn.pragma_update(None, "temp_store", "MEMORY").unwrap();
+
         Self {
-            db_conn: Mutex::new(Self::create_tiles_db_connection(path)),
+            db_conn: Mutex::new(conn),
         }
     }
 
