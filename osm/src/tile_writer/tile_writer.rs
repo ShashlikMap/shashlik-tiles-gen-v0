@@ -303,7 +303,7 @@ impl TileWriter {
 
     fn lat_lon_to_world(lat_lon: &Coord<f64>, zl: i32) -> Coord<f64> {
         let lat_lon: (f64, f64) = (*lat_lon).into();
-        Mercator::with_size(1)
+        Mercator::with_size(4)
             // client will use * 2.0.pow(zoom_level) to restore the value
             .from_ll_to_subpixel(&lat_lon, (22 - zl) as usize)
             .unwrap()

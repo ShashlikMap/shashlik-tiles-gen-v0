@@ -23,7 +23,7 @@ impl TileKey {
 
         let tiles_count = (TILES_COUNT / 2i32.pow(self.zoom_level as u32)).max(1);
         let tile_width = world_rect.width() / tiles_count as f64;
-        let tile_height = world_rect.height() / tiles_count as f64;
+        let tile_height = world_rect.width() / tiles_count as f64;
         let p1 = coord!(x: tile_width * self.tile_x as f64 + world_rect.min().x,
             y: tile_height * self.tile_y as f64 + world_rect.min().y);
         let p2 = coord!(x: p1.x + tile_width, y: p1.y + tile_height);
@@ -55,11 +55,11 @@ pub fn calc_tile_ranges(total_tiles: i32, zoom_level: i32, rect: &Rect) -> TileR
         .clamp(0, tiles_count - 1);
     let tile_min_y = ((tiles_count_f64
         * ((rect.min().y - world_rect.min().y)
-        / world_rect.height())) as i32)
+        / world_rect.width())) as i32)
         .clamp(0, tiles_count - 1);
     let tile_max_y = ((tiles_count_f64
         * ((rect.max().y - world_rect.min().y)
-        / world_rect.height())) as i32)
+        / world_rect.width())) as i32)
         .clamp(0, tiles_count - 1);
 
     TileRanges {

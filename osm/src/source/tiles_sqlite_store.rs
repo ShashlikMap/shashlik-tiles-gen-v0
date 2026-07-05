@@ -43,6 +43,7 @@ impl TilesSQLiteStore {
         y: i32,
         z: i32,
     ) -> Result<Vec<u8>, Report<TilesSQLiteStoreError>> {
+        println!("get tile from sqlite: {x}, {y}, {z}");
         let tile_data = self
             .get_tile_internal(x, y, z)
             .change_context(TilesSQLiteStoreError::SqliteError)?;

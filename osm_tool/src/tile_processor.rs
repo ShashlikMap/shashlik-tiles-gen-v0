@@ -119,7 +119,7 @@ impl TileProcessor {
                             MapPointObjectKind::TrainStation(is_train) => {
                                 zoom_level <= if is_train { 4 } else { 2 }
                             },
-                            MapPointObjectKind::EVCharging => zoom_level <= 4,
+                            MapPointObjectKind::EVCharging => zoom_level <= 5,
                             _ => zoom_level <= 1
                         };
                         if condition {

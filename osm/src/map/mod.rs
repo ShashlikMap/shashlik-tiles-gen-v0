@@ -15,11 +15,11 @@ pub fn get_world_boundary() -> Rect {
     Rect::new(
         Coord {
             x: -180.0,
-            y: 89.0,
+            y: 90.0,
         },
         Coord {
             x: 180.0,
-            y: -75.0,
+            y: -90.0,
         },
     )
 }
