@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::io::Read;
 
 pub const TILES_COUNT: i32 = 32768;
+pub const TILE_SIZE: usize = 4;
 pub const TILE_OVERLAP_PERCENT: f64 = 1.01;
 
 #[derive(Hash, PartialEq, Eq, Debug, Clone, Copy, Serialize, Deserialize)]

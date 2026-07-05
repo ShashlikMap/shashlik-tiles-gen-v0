@@ -3,7 +3,7 @@ use crate::map::MapGeometry;
 use crate::map::MapGeometryCollection;
 use crate::map::DBS_FOLDER;
 use crate::tile_writer::sutherland_hodgman::sutherland_hodgman_clip;
-use crate::tiles::{calc_tile_ranges, create_tiles_db_connection, TileKey, TileRanges, TILES_COUNT, TILE_OVERLAP_PERCENT};
+use crate::tiles::{calc_tile_ranges, create_tiles_db_connection, TileKey, TileRanges, TILES_COUNT, TILE_OVERLAP_PERCENT, TILE_SIZE};
 use flate2::write::GzEncoder;
 use flate2::Compression;
 use geo::line_intersection::line_intersection;
@@ -303,7 +303,7 @@ impl TileWriter {
 
     fn lat_lon_to_world(lat_lon: &Coord<f64>, zl: i32) -> Coord<f64> {
         let lat_lon: (f64, f64) = (*lat_lon).into();
-        Mercator::with_size(4)
+        Mercator::with_size(TILE_SIZE)
             // client will use * 2.0.pow(zoom_level) to restore the value
             .from_ll_to_subpixel(&lat_lon, (22 - zl) as usize)
             .unwrap()
