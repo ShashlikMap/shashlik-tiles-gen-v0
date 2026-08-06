@@ -391,6 +391,7 @@ impl RailwayKind {
 pub enum LineKind {
     Highway { kind: HighwayKind },
     Railway { kind: RailwayKind },
+    Label
 }
 
 impl LineKind {
@@ -398,6 +399,7 @@ impl LineKind {
         match self {
             Self::Highway { kind } => kind.get_layer(),
             Self::Railway { kind } => kind.get_layer(),
+            Self::Label => u16::MAX
         }
     }
 
@@ -405,6 +407,7 @@ impl LineKind {
         match self {
             Self::Highway { kind } => kind.is_it_link(),
             Self::Railway { .. } => true,
+            Self::Label => false
         }
     }
 }
